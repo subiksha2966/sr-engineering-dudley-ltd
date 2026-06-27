@@ -126,16 +126,33 @@ export default function Footer({ darkMode }: FooterProps) {
           </div>
         </div>
 
-        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-gray-500 text-sm text-center">
-            &copy; {new Date().getFullYear()} SR Engineering Dudley LTD. All rights reserved.
-          </p>
-          <div className="flex gap-5">
-            <a href="#" className="text-gray-500 hover:text-gray-300 text-xs transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-500 hover:text-gray-300 text-xs transition-colors">Terms of Service</a>
-          </div>
-        </div>
-      </div>
+<div className="border-t border-white/10 pt-8 flex flex-col items-center justify-center gap-3 text-center">
+  <p className="text-gray-500 text-sm">
+    &copy; {new Date().getFullYear()} SR Engineering Dudley LTD. All Rights Reserved.
+  </p>
+
+  <p className="text-sm text-gray-400">
+    Website Designed &amp; Developed by{" "}
+    <span className="font-bold text-blue-400 tracking-wide">
+      Subiksha Ramesh
+    </span>
+  </p>
+
+  <div className="flex gap-5 mt-2">
+    <a
+      href="/privacy-policy"
+      className="text-gray-500 hover:text-blue-400 text-xs transition-colors"
+    >
+      Privacy Policy
+    </a>
+    <a
+      href="/terms"
+      className="text-gray-500 hover:text-blue-400 text-xs transition-colors"
+    >
+      Terms of Service
+    </a>
+  </div>
+</div>
     </footer>
   );
 }
