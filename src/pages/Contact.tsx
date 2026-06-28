@@ -9,7 +9,7 @@ import {
   AlertCircle,
   ArrowRight,
 } from 'lucide-react';
-import emailjs from 'emailjs-com';
+import emailjs from '@emailjs/browser';
 import PageHeader from '../components/PageHeader';
 import ScrollReveal from '../components/ScrollReveal';
 
@@ -36,10 +36,9 @@ interface FormErrors {
   message?: string;
 }
 
-// TODO: Replace with your EmailJS credentials from https://dashboard.emailjs.com/
-const SERVICE_ID = 'YOUR_SERVICE_ID';      // TODO: EmailJS Service ID
-const TEMPLATE_ID = 'YOUR_TEMPLATE_ID';    // TODO: EmailJS Template ID
-const PUBLIC_KEY = 'YOUR_PUBLIC_KEY';      // TODO: EmailJS Public Key
+const SERVICE_ID = 'service_7gfmw86';
+const TEMPLATE_ID = 'template_vrcsrdk';
+const PUBLIC_KEY = '37YjOuTIxrAWLakAm';
 
 interface ContactProps {
   darkMode: boolean;
@@ -87,16 +86,18 @@ export default function Contact({ darkMode }: ContactProps) {
     if (!validate()) return;
     setStatus('loading');
     try {
+      const messageWithService = form.service
+        ? `Service: ${form.service}\n\nMessage:\n${form.message}`
+        : form.message;
+
       await emailjs.send(
         SERVICE_ID,
         TEMPLATE_ID,
         {
-          from_name: form.name,
-          from_email: form.email,
+          name: form.name,
+          email: form.email,
           phone: form.phone || 'Not provided',
-          service: form.service,
-          message: form.message,
-          to_email: 'info@srengineeringdudleyltd.co.uk',
+          message: messageWithService,
         },
         PUBLIC_KEY
       );
@@ -227,17 +228,10 @@ export default function Contact({ darkMode }: ContactProps) {
                       <CheckCircle size={40} className="text-emerald-600" />
                     </div>
                     <h3 className={`text-2xl font-black mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                      Enquiry Sent Successfully!
+                      Thank you!
                     </h3>
                     <p className={`text-base mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                      Thank you for contacting SR Engineering Dudley LTD.
-                    </p>
-                    <p className={`text-sm leading-relaxed max-w-sm mb-8 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                      Our team will review your request and respond to you via email or phone as soon as possible. For urgent matters, please call us directly on{' '}
-                      <a href="tel:+447393264576" className="text-blue-500 font-semibold">
-                        +44 7393 264576
-                      </a>{' '}
-                      — we're available 24/7.
+                      Your enquiry has been sent successfully. We'll contact you soon.
                     </p>
                     <button
                       onClick={() => setStatus('idle')}
@@ -362,11 +356,7 @@ export default function Contact({ darkMode }: ContactProps) {
                       {status === 'error' && (
                         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-2 text-red-700 text-sm">
                           <AlertCircle size={16} />
-                          Something went wrong. Please call us directly on{' '}
-                          <a href="tel:+447393264576" className="font-bold underline">
-                            +44 7393 264576
-                          </a>
-                          .
+                          Failed to send enquiry. Please try again.
                         </div>
                       )}
 
@@ -378,7 +368,7 @@ export default function Contact({ darkMode }: ContactProps) {
                         {status === 'loading' ? (
                           <>
                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Sending Enquiry...
+                            Sending...
                           </>
                         ) : (
                           <>
