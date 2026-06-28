@@ -135,7 +135,7 @@ export default function Footer({ darkMode }: FooterProps) {
           </p>
           <p className="text-gray-500 text-sm text-center">
             Website Designed & Developed by{' '}
-            <span className="text-blue-400 font-bold hover:text-blue-300 transition-colors">Subiksha Ramesh & Swathi barani</span>
+            <span className="text-blue-400 font-bold hover:text-blue-300 transition-colors">Subiksha Ramesh &</span> & <span style="color:#2563eb;">Swathi Barani</span>
           </p>
           <div className="flex gap-5">
             <a href="#" className="text-gray-500 hover:text-gray-300 text-xs transition-colors">Privacy Policy</a>
