@@ -37,7 +37,7 @@ interface FormErrors {
 }
 
 const SERVICE_ID = 'service_7gfmw86';
-const TEMPLATE_ID = 'template_vrcsrdk';
+const TEMPLATE_ID = 'template_56z3vpi';
 const PUBLIC_KEY = '37YjOuTIxrAWLakAm';
 
 interface ContactProps {
