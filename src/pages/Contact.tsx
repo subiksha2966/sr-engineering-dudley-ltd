@@ -37,7 +37,7 @@ interface FormErrors {
 }
 
 const SERVICE_ID = 'service_7gfmw86';
-const TEMPLATE_ID = 'template_qx45d4m';
+const TEMPLATE_ID = 'template_56z3vpi';
 const PUBLIC_KEY = 'cW6jHtMcenYxqCP3O';
 
 interface ContactProps {
@@ -86,24 +86,33 @@ export default function Contact({ darkMode }: ContactProps) {
     if (!validate()) return;
     setStatus('loading');
     try {
-      const messageWithService = form.service
-        ? `Service: ${form.service}\n\nMessage:\n${form.message}`
-        : form.message;
+      const templateParams = {
+        name: form.name,
+        email: form.email,
+        phone: form.phone || 'Not provided',
+        service: form.service || 'Not specified',
+        message: form.message,
+      };
 
-      await emailjs.send(
+      console.log('EMAILJS: Sending with params:', templateParams);
+
+      const response = await emailjs.send(
         SERVICE_ID,
         TEMPLATE_ID,
+        templateParams,
         {
-          name: form.name,
-          email: form.email,
-          phone: form.phone || 'Not provided',
-          message: messageWithService,
-        },
-        PUBLIC_KEY
+          publicKey: PUBLIC_KEY,
+        }
       );
+
+      console.log('EMAILJS SUCCESS:', response.status, response.text);
       setStatus('success');
       setForm({ name: '', email: '', phone: '', service: '', message: '' });
-    } catch {
+    } catch (error: any) {
+      console.error('EMAILJS ERROR:', error);
+      console.error('Status:', error?.status);
+      console.error('Text:', error?.text);
+      console.error('Full Error:', JSON.stringify(error, null, 2));
       setStatus('error');
     }
   };
