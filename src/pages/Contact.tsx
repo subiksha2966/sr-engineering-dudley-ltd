@@ -36,9 +36,9 @@ interface FormErrors {
   message?: string;
 }
 
-const SERVICE_ID = 'service_7gfmw86';
-const TEMPLATE_ID = 'template_56z3vpi';
-const PUBLIC_KEY = 'cW6jHtMcenYxqCP3O';
+const SERVICE_ID = 'service_7fcq0zh';
+const TEMPLATE_ID = 'template_atbbphz';
+const PUBLIC_KEY = 'n9cxpqniytnhMD-md';
 
 interface ContactProps {
   darkMode: boolean;
