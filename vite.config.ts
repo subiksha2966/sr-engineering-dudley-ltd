@@ -5,15 +5,5 @@ export default defineConfig({
   plugins: [react()],
   build: {
     assetsDir: 'assets',
-    rollupOptions: {
-      output: {
-        entryFileNames: 'assets/app.js',
-        chunkFileNames: 'assets/[name].js',
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name?.endsWith('.css')) return 'assets/style.css';
-          return 'assets/[name][extname]';
-        },
-      },
-    },
   },
 });
