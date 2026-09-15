@@ -37,7 +37,13 @@ interface FormErrors {
 }
 
 const SERVICE_ID = 'service_7fcq0zh';
-const TEMPLATE_ID = 'template_atbbphz';
+
+// Customer thank-you email
+const AUTO_REPLY_TEMPLATE_ID = 'template_atbbphz';
+
+// Company notification email
+const COMPANY_TEMPLATE_ID = 'template_2eob2ig';
+
 const PUBLIC_KEY = 'n9cxpqniytnhMD-md';
 
 interface ContactProps {
@@ -52,40 +58,68 @@ export default function Contact({ darkMode }: ContactProps) {
     service: '',
     message: '',
   });
+
   const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<
+    'idle' | 'loading' | 'success' | 'error'
+  >('idle');
 
   const validate = (): boolean => {
     const e: FormErrors = {};
-    if (!form.name.trim()) e.name = 'Please enter your name.';
+
+    if (!form.name.trim()) {
+      e.name = 'Please enter your name.';
+    }
+
     if (!form.email.trim()) {
       e.email = 'Please enter your email.';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       e.email = 'Enter a valid email address.';
     }
-    if (!form.service) e.service = 'Please select a service.';
+
+    if (!form.service) {
+      e.service = 'Please select a service.';
+    }
+
     if (!form.message.trim()) {
       e.message = 'Please enter your message.';
     } else if (form.message.trim().length < 10) {
       e.message = 'Message must be at least 10 characters.';
     }
+
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleChange = (ev: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    ev: ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = ev.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
     if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
     }
   };
 
   const handleSubmit = async (ev: FormEvent) => {
     ev.preventDefault();
+
     if (!validate()) return;
+
     setStatus('loading');
+
     try {
+      // Data sent to BOTH EmailJS templates
       const templateParams = {
         name: form.name,
         email: form.email,
@@ -96,23 +130,74 @@ export default function Contact({ darkMode }: ContactProps) {
 
       console.log('EMAILJS: Sending with params:', templateParams);
 
-      const response = await emailjs.send(
+      /*
+       * EMAIL 1:
+       * Sends the thank-you email to the customer.
+       *
+       * Your Auto-Reply template should have:
+       * To Email = {{email}}
+       */
+
+      const autoReplyResponse = await emailjs.send(
         SERVICE_ID,
-        TEMPLATE_ID,
+        AUTO_REPLY_TEMPLATE_ID,
         templateParams,
         {
           publicKey: PUBLIC_KEY,
         }
       );
 
-      console.log('EMAILJS SUCCESS:', response.status, response.text);
+      console.log(
+        'AUTO-REPLY SUCCESS:',
+        autoReplyResponse.status,
+        autoReplyResponse.text
+      );
+
+      /*
+       * EMAIL 2:
+       * Sends the enquiry details to SR Engineering.
+       *
+       * Your Feedback template should have:
+       * To Email = info@srengineeringdudleyltd.co.uk
+       */
+
+      const companyResponse = await emailjs.send(
+        SERVICE_ID,
+        COMPANY_TEMPLATE_ID,
+        templateParams,
+        {
+          publicKey: PUBLIC_KEY,
+        }
+      );
+
+      console.log(
+        'COMPANY EMAIL SUCCESS:',
+        companyResponse.status,
+        companyResponse.text
+      );
+
+      // Both emails successfully sent
       setStatus('success');
-      setForm({ name: '', email: '', phone: '', service: '', message: '' });
+
+      // Clear form
+      setForm({
+        name: '',
+        email: '',
+        phone: '',
+        service: '',
+        message: '',
+      });
+
+      setErrors({});
     } catch (error: any) {
       console.error('EMAILJS ERROR:', error);
       console.error('Status:', error?.status);
       console.error('Text:', error?.text);
-      console.error('Full Error:', JSON.stringify(error, null, 2));
+      console.error(
+        'Full Error:',
+        JSON.stringify(error, null, 2)
+      );
+
       setStatus('error');
     }
   };
@@ -164,17 +249,40 @@ export default function Contact({ darkMode }: ContactProps) {
         darkMode={darkMode}
       />
 
-      <section className={`py-24 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <section
+        className={`py-24 ${
+          darkMode ? 'bg-gray-900' : 'bg-white'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-5 gap-10 lg:gap-14">
+
+            {/* LEFT SIDE */}
             <div className="lg:col-span-2 space-y-5">
               <ScrollReveal>
                 <div className="reveal opacity-0 mb-6">
-                  <h2 className={`text-2xl sm:text-3xl font-black mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                    Get in <span className="text-blue-600">Touch</span>
+                  <h2
+                    className={`text-2xl sm:text-3xl font-black mb-2 ${
+                      darkMode ? 'text-white' : 'text-gray-900'
+                    }`}
+                  >
+                    Get in{' '}
+                    <span className="text-blue-600">
+                      Touch
+                    </span>
                   </h2>
-                  <p className={`text-sm leading-relaxed ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                    Use the form to send us an enquiry and we'll get back to you as soon as possible. For emergencies, call us directly — we're available 24/7.
+
+                  <p
+                    className={`text-sm leading-relaxed ${
+                      darkMode
+                        ? 'text-gray-400'
+                        : 'text-gray-500'
+                    }`}
+                  >
+                    Use the form to send us an enquiry and
+                    we'll get back to you as soon as possible.
+                    For emergencies, call us directly — we're
+                    available 24/7.
                   </p>
                 </div>
 
@@ -182,40 +290,85 @@ export default function Contact({ darkMode }: ContactProps) {
                   <div
                     key={c.label}
                     className={`reveal opacity-0 flex items-start gap-4 p-4 rounded-xl border transition-all hover:-translate-y-0.5 ${
-                      darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-100 hover:shadow-md'
+                      darkMode
+                        ? 'bg-gray-800 border-gray-700'
+                        : 'bg-gray-50 border-gray-100 hover:shadow-md'
                     }`}
                   >
                     <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <c.icon size={18} className="text-white" />
+                      <c.icon
+                        size={18}
+                        className="text-white"
+                      />
                     </div>
+
                     <div>
-                      <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <p
+                        className={`text-xs font-bold uppercase tracking-wider mb-0.5 ${
+                          darkMode
+                            ? 'text-gray-400'
+                            : 'text-gray-500'
+                        }`}
+                      >
                         {c.label}
                       </p>
+
                       {c.href ? (
                         <a
                           href={c.href}
-                          className={`text-sm font-semibold hover:text-blue-500 transition-colors ${darkMode ? 'text-white' : 'text-gray-900'}`}
+                          className={`text-sm font-semibold hover:text-blue-500 transition-colors ${
+                            darkMode
+                              ? 'text-white'
+                              : 'text-gray-900'
+                          }`}
                         >
                           {c.value}
                         </a>
                       ) : (
-                        <p className={`text-sm font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{c.value}</p>
+                        <p
+                          className={`text-sm font-semibold ${
+                            darkMode
+                              ? 'text-white'
+                              : 'text-gray-900'
+                          }`}
+                        >
+                          {c.value}
+                        </p>
                       )}
-                      <p className={`text-xs mt-0.5 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>{c.sub}</p>
+
+                      <p
+                        className={`text-xs mt-0.5 ${
+                          darkMode
+                            ? 'text-gray-500'
+                            : 'text-gray-400'
+                        }`}
+                      >
+                        {c.sub}
+                      </p>
                     </div>
                   </div>
                 ))}
 
+                {/* Emergency Service */}
                 <div className="reveal opacity-0 mt-2 p-5 rounded-2xl bg-blue-600 text-white">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                    <span className="text-xs font-bold uppercase tracking-wider">Emergency Service</span>
+
+                    <span className="text-xs font-bold uppercase tracking-wider">
+                      Emergency Service
+                    </span>
                   </div>
-                  <p className="font-black text-lg leading-tight mb-1">24/7 Emergency Callouts</p>
-                  <p className="text-blue-100 text-sm mb-3">
-                    Available around the clock for urgent plumbing, electrical, and engineering emergencies.
+
+                  <p className="font-black text-lg leading-tight mb-1">
+                    24/7 Emergency Callouts
                   </p>
+
+                  <p className="text-blue-100 text-sm mb-3">
+                    Available around the clock for urgent
+                    plumbing, electrical, and engineering
+                    emergencies.
+                  </p>
+
                   <a
                     href="tel:+447393264576"
                     className="inline-flex items-center gap-2 bg-white text-blue-600 font-bold text-sm px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors"
@@ -227,53 +380,117 @@ export default function Contact({ darkMode }: ContactProps) {
               </ScrollReveal>
             </div>
 
+            {/* RIGHT SIDE - FORM */}
             <ScrollReveal className="lg:col-span-3">
               <div
-                className={`reveal opacity-0 rounded-2xl border p-6 sm:p-8 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-100'}`}
+                className={`reveal opacity-0 rounded-2xl border p-6 sm:p-8 ${
+                  darkMode
+                    ? 'bg-gray-800 border-gray-700'
+                    : 'bg-gray-50 border-gray-100'
+                }`}
               >
+
+                {/* SUCCESS */}
                 {status === 'success' ? (
                   <div className="flex flex-col items-center justify-center py-16 text-center">
                     <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-5">
-                      <CheckCircle size={40} className="text-emerald-600" />
+                      <CheckCircle
+                        size={40}
+                        className="text-emerald-600"
+                      />
                     </div>
-                    <h3 className={`text-2xl font-black mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+
+                    <h3
+                      className={`text-2xl font-black mb-3 ${
+                        darkMode
+                          ? 'text-white'
+                          : 'text-gray-900'
+                      }`}
+                    >
                       Thank you!
                     </h3>
-                    <p className={`text-base mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                      Your enquiry has been sent successfully. We'll contact you soon.
+
+                    <p
+                      className={`text-base mb-2 ${
+                        darkMode
+                          ? 'text-gray-300'
+                          : 'text-gray-600'
+                      }`}
+                    >
+                      Your enquiry has been sent
+                      successfully. We'll contact you soon.
                     </p>
+
                     <button
                       onClick={() => setStatus('idle')}
                       className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold px-7 py-3 rounded-xl transition-all"
                     >
-                      Send Another Enquiry <ArrowRight size={16} />
+                      Send Another Enquiry
+                      <ArrowRight size={16} />
                     </button>
                   </div>
                 ) : (
                   <>
                     <div className="mb-6">
-                      <h3 className={`text-xl font-black mb-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                      <h3
+                        className={`text-xl font-black mb-1 ${
+                          darkMode
+                            ? 'text-white'
+                            : 'text-gray-900'
+                        }`}
+                      >
                         Request a Free Quote
                       </h3>
-                      <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                        Fill in the form and we'll get back to you promptly. For emergencies, call us directly.
+
+                      <p
+                        className={`text-sm ${
+                          darkMode
+                            ? 'text-gray-400'
+                            : 'text-gray-500'
+                        }`}
+                      >
+                        Fill in the form and we'll get back to
+                        you promptly. For emergencies, call us
+                        directly.
                       </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+                    <form
+                      onSubmit={handleSubmit}
+                      noValidate
+                      className="space-y-5"
+                    >
+
+                      {/* NAME + EMAIL */}
                       <div className="grid sm:grid-cols-2 gap-5">
+
                         <div>
-                          <label className={`block text-sm font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Full Name <span className="text-red-500">*</span>
+                          <label
+                            className={`block text-sm font-semibold mb-1.5 ${
+                              darkMode
+                                ? 'text-gray-300'
+                                : 'text-gray-700'
+                            }`}
+                          >
+                            Full Name{' '}
+                            <span className="text-red-500">
+                              *
+                            </span>
                           </label>
+
                           <input
                             type="text"
                             name="name"
                             value={form.name}
                             onChange={handleChange}
                             placeholder="John Smith"
-                            className={`${inputBase} ${errors.name ? 'border-red-400' : ''}`}
+                            className={`${inputBase} ${
+                              errors.name
+                                ? 'border-red-400'
+                                : ''
+                            }`}
                           />
+
                           {errors.name && (
                             <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                               <AlertCircle size={12} />
@@ -281,18 +498,34 @@ export default function Contact({ darkMode }: ContactProps) {
                             </p>
                           )}
                         </div>
+
                         <div>
-                          <label className={`block text-sm font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Email Address <span className="text-red-500">*</span>
+                          <label
+                            className={`block text-sm font-semibold mb-1.5 ${
+                              darkMode
+                                ? 'text-gray-300'
+                                : 'text-gray-700'
+                            }`}
+                          >
+                            Email Address{' '}
+                            <span className="text-red-500">
+                              *
+                            </span>
                           </label>
+
                           <input
                             type="email"
                             name="email"
                             value={form.email}
                             onChange={handleChange}
                             placeholder="john@example.com"
-                            className={`${inputBase} ${errors.email ? 'border-red-400' : ''}`}
+                            className={`${inputBase} ${
+                              errors.email
+                                ? 'border-red-400'
+                                : ''
+                            }`}
                           />
+
                           {errors.email && (
                             <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                               <AlertCircle size={12} />
@@ -302,11 +535,20 @@ export default function Contact({ darkMode }: ContactProps) {
                         </div>
                       </div>
 
+                      {/* PHONE + SERVICE */}
                       <div className="grid sm:grid-cols-2 gap-5">
+
                         <div>
-                          <label className={`block text-sm font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                          <label
+                            className={`block text-sm font-semibold mb-1.5 ${
+                              darkMode
+                                ? 'text-gray-300'
+                                : 'text-gray-700'
+                            }`}
+                          >
                             Phone Number
                           </label>
+
                           <input
                             type="tel"
                             name="phone"
@@ -316,23 +558,42 @@ export default function Contact({ darkMode }: ContactProps) {
                             className={inputBase}
                           />
                         </div>
+
                         <div>
-                          <label className={`block text-sm font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                            Service Required <span className="text-red-500">*</span>
+                          <label
+                            className={`block text-sm font-semibold mb-1.5 ${
+                              darkMode
+                                ? 'text-gray-300'
+                                : 'text-gray-700'
+                            }`}
+                          >
+                            Service Required{' '}
+                            <span className="text-red-500">
+                              *
+                            </span>
                           </label>
+
                           <select
                             name="service"
                             value={form.service}
                             onChange={handleChange}
-                            className={`${inputBase} ${errors.service ? 'border-red-400' : ''}`}
+                            className={`${inputBase} ${
+                              errors.service
+                                ? 'border-red-400'
+                                : ''
+                            }`}
                           >
-                            <option value="">Select a service...</option>
+                            <option value="">
+                              Select a service...
+                            </option>
+
                             {services.map((s) => (
                               <option key={s} value={s}>
                                 {s}
                               </option>
                             ))}
                           </select>
+
                           {errors.service && (
                             <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                               <AlertCircle size={12} />
@@ -342,18 +603,34 @@ export default function Contact({ darkMode }: ContactProps) {
                         </div>
                       </div>
 
+                      {/* MESSAGE */}
                       <div>
-                        <label className={`block text-sm font-semibold mb-1.5 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                          Message / Project Details <span className="text-red-500">*</span>
+                        <label
+                          className={`block text-sm font-semibold mb-1.5 ${
+                            darkMode
+                              ? 'text-gray-300'
+                              : 'text-gray-700'
+                          }`}
+                        >
+                          Message / Project Details{' '}
+                          <span className="text-red-500">
+                            *
+                          </span>
                         </label>
+
                         <textarea
                           name="message"
                           value={form.message}
                           onChange={handleChange}
                           rows={5}
                           placeholder="Please describe your project or enquiry in as much detail as possible..."
-                          className={`${inputBase} resize-none ${errors.message ? 'border-red-400' : ''}`}
+                          className={`${inputBase} resize-none ${
+                            errors.message
+                              ? 'border-red-400'
+                              : ''
+                          }`}
                         />
+
                         {errors.message && (
                           <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
                             <AlertCircle size={12} />
@@ -362,13 +639,16 @@ export default function Contact({ darkMode }: ContactProps) {
                         )}
                       </div>
 
+                      {/* ERROR */}
                       {status === 'error' && (
                         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-2 text-red-700 text-sm">
                           <AlertCircle size={16} />
-                          Failed to send enquiry. Please try again.
+                          Failed to send enquiry. Please try
+                          again.
                         </div>
                       )}
 
+                      {/* SUBMIT */}
                       <button
                         type="submit"
                         disabled={status === 'loading'}
@@ -387,9 +667,17 @@ export default function Contact({ darkMode }: ContactProps) {
                         )}
                       </button>
 
-                      <p className={`text-center text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
-                        Your enquiry will be sent directly to info@srengineeringdudleyltd.co.uk
+                      <p
+                        className={`text-center text-xs ${
+                          darkMode
+                            ? 'text-gray-500'
+                            : 'text-gray-400'
+                        }`}
+                      >
+                        Your enquiry will be sent directly to
+                        info@srengineeringdudleyltd.co.uk
                       </p>
+
                     </form>
                   </>
                 )}
