@@ -130,12 +130,18 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} SR Engineering Dudley LTD. All Rights Reserved.
           </p>
           <p className="text-gray-500 text-xs sm:text-sm text-center">
-            Designed & Developed by{' '}
-          <a href="mailto:subiksharkambattu@gmail.com" className="text-blue-400 font-semibold hover:text-blue-300 hover:underline underline-offset-2 decoration-blue-400/50 transition-colors cursor-pointer">Subiksha Ramesh</a>
+            <span>Designed &amp; Developed by </span>
+            <a
+              href="mailto:subiksharkambattu@gmail.com"
+              onClick={(e) => e.stopPropagation()}
+              className="text-blue-400 font-semibold hover:text-blue-300 hover:underline underline-offset-2 decoration-blue-400/50 transition-colors cursor-pointer"
+            >
+              Subiksha Ramesh
+            </a>
           </p>
           <div className="flex gap-5">
-            <a href="#" className="text-gray-500 hover:text-gray-300 text-xs transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-500 hover:text-gray-300 text-xs transition-colors">Terms of Service</a>
+            <span className="text-gray-500 hover:text-gray-300 text-xs transition-colors cursor-pointer">Privacy Policy</span>
+            <span className="text-gray-500 hover:text-gray-300 text-xs transition-colors cursor-pointer">Terms of Service</span>
           </div>
         </div>
       </div>
