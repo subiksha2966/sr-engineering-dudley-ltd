@@ -20,13 +20,9 @@ const socials = [
   { icon: Instagram, href: 'https://www.instagram.com/srengineeringdudleyltd?igsh=c3g0cWoycm5xc2k1', label: 'Instagram' },
 ];
 
-interface FooterProps {
-  darkMode: boolean;
-}
-
-export default function Footer({ darkMode }: FooterProps) {
+export default function Footer() {
   return (
-    <footer className={darkMode ? 'bg-gray-950 text-white' : 'bg-[#0f1e3d] text-white'}>
+    <footer className="bg-gray-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           <div>

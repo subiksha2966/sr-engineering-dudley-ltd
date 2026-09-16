@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -9,12 +9,7 @@ const navLinks = [
   { to: '/contact', label: 'Contact Us' },
 ];
 
-interface NavbarProps {
-  darkMode: boolean;
-  toggleDarkMode: () => void;
-}
-
-export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
+export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -28,9 +23,7 @@ export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
 
   useEffect(() => setMenuOpen(false), [location.pathname]);
 
-  const scrolledNav = darkMode
-    ? 'bg-gray-900/97 shadow-lg shadow-black/30'
-    : 'bg-white/97 shadow-lg shadow-gray-200/60';
+  const scrolledNav = 'bg-gray-900/97 shadow-lg shadow-black/30';
   const transparentNav = 'bg-transparent';
   const showScrolled = !isHome || scrolled;
 
@@ -44,16 +37,16 @@ export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
             <img
               src="/sr_logo.jpg"
               alt="SR Engineering Dudley LTD"
-              className={`transition-all duration-300 object-contain ${showScrolled ? 'h-11 w-11' : 'h-14 w-14'} ${!showScrolled && !darkMode ? 'brightness-0 invert' : ''}`}
+              className={`transition-all duration-300 object-contain ${showScrolled ? 'h-11 w-11' : 'h-14 w-14'}`}
             />
             <div className="hidden sm:block">
               <p
-                className={`font-black text-base leading-tight tracking-tight transition-colors ${showScrolled ? (darkMode ? 'text-white' : 'text-[#1a2e5c]') : 'text-white'}`}
+                className={`font-black text-base leading-tight tracking-tight transition-colors ${showScrolled ? 'text-white' : 'text-white'}`}
               >
                 SR Engineering
               </p>
               <p
-                className={`text-xs font-semibold leading-none transition-colors ${showScrolled ? (darkMode ? 'text-blue-400' : 'text-blue-600') : 'text-blue-300'}`}
+                className={`text-xs font-semibold leading-none transition-colors ${showScrolled ? 'text-blue-400' : 'text-blue-300'}`}
               >
                 Dudley LTD
               </p>
@@ -71,9 +64,7 @@ export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
                     isActive
                       ? 'bg-blue-600 text-white shadow-sm'
                       : showScrolled
-                        ? darkMode
-                          ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                        ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
                         : 'text-white/90 hover:bg-white/15 hover:text-white'
                   }`
                 }
@@ -81,19 +72,6 @@ export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
                 {link.label}
               </NavLink>
             ))}
-            <button
-              onClick={toggleDarkMode}
-              aria-label="Toggle dark mode"
-              className={`ml-2 p-2.5 rounded-lg transition-colors ${
-                showScrolled
-                  ? darkMode
-                    ? 'bg-gray-800 text-yellow-400 hover:bg-gray-700'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
             <NavLink
               to="/contact"
               className="ml-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-blue-500/30"
@@ -104,26 +82,11 @@ export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
 
           <div className="flex items-center gap-2 lg:hidden">
             <button
-              onClick={toggleDarkMode}
-              aria-label="Toggle dark mode"
-              className={`p-2 rounded-lg ${
-                showScrolled
-                  ? darkMode
-                    ? 'bg-gray-800 text-yellow-400'
-                    : 'bg-gray-100 text-gray-600'
-                  : 'bg-white/10 text-white'
-              }`}
-            >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-            <button
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
               className={`p-2 rounded-lg ${
                 showScrolled
-                  ? darkMode
-                    ? 'bg-gray-800 text-white'
-                    : 'bg-gray-100 text-gray-700'
+                  ? 'bg-gray-800 text-white'
                   : 'bg-white/10 text-white'
               }`}
             >
@@ -134,7 +97,7 @@ export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
       </div>
 
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'} ${darkMode ? 'bg-gray-900 border-t border-gray-800' : 'bg-white border-t border-gray-100'}`}
+        className={`lg:hidden overflow-hidden transition-all duration-300 ${menuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'} bg-gray-900 border-t border-gray-800`}
       >
         <div className="px-4 py-4 space-y-1">
           {navLinks.map((link) => (
@@ -146,9 +109,7 @@ export default function Navbar({ darkMode, toggleDarkMode }: NavbarProps) {
                 `block py-2.5 px-4 rounded-xl text-sm font-semibold transition-colors ${
                   isActive
                     ? 'bg-blue-600 text-white'
-                    : darkMode
-                      ? 'text-gray-300 hover:bg-gray-800'
-                      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                    : 'text-gray-300 hover:bg-gray-800'
                 }`
               }
             >

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -9,12 +9,6 @@ import Services from './pages/Services';
 import Contact from './pages/Contact';
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('sr-dark-mode');
-    if (saved !== null) return saved === 'true';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
-
   const location = useLocation();
 
   useEffect(() => {
@@ -22,23 +16,22 @@ export default function App() {
   }, [location.pathname]);
 
   useEffect(() => {
-    localStorage.setItem('sr-dark-mode', String(darkMode));
-    document.documentElement.classList.toggle('dark', darkMode);
-    document.body.style.backgroundColor = darkMode ? '#030712' : '#ffffff';
-  }, [darkMode]);
+    document.documentElement.classList.add('dark');
+    document.body.style.backgroundColor = '#030712';
+  }, []);
 
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <Navbar darkMode={darkMode} toggleDarkMode={() => setDarkMode((d) => !d)} />
+    <div className="dark">
+      <Navbar />
       <main className="min-h-screen">
         <Routes>
-          <Route path="/" element={<Home darkMode={darkMode} />} />
-          <Route path="/about" element={<About darkMode={darkMode} />} />
-          <Route path="/services" element={<Services darkMode={darkMode} />} />
-          <Route path="/contact" element={<Contact darkMode={darkMode} />} />
+          <Route path="/" element={<Home darkMode={true} />} />
+          <Route path="/about" element={<About darkMode={true} />} />
+          <Route path="/services" element={<Services darkMode={true} />} />
+          <Route path="/contact" element={<Contact darkMode={true} />} />
         </Routes>
       </main>
-      <Footer darkMode={darkMode} />
+      <Footer />
       <WhatsAppButton />
     </div>
   );
