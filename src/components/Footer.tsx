@@ -230,28 +230,3 @@ export default function Footer() {
     </footer>
   );
 }
-```
-
-### The important fix 👇
-
-Your developer link is now:
-
-```jsx
-<a
-  href="mailto:subiksharkambattu@gmail.com"
-  aria-label="Email Subiksha Ramesh"
-  className="relative z-50 inline-block ..."
->
-  Subiksha Ramesh
-</a>
-```
-
-So:
-
-* 📞 **+44 7393 264576** → company phone
-* 📧 **[info@srengineeringdudleyltd.co.uk](mailto:info@srengineeringdudleyltd.co.uk)** → company email
-* 👩‍💻 **Subiksha Ramesh** → `subiksharkambattu@gmail.com`
-
-And importantly, I removed the unnecessary `onClick={(e) => e.stopPropagation()}`.
-
-Paste this entire file into your `Footer.jsx` and test it.
